@@ -1,26 +1,23 @@
 #![deny(unsafe_code)]
-//#![deny(warnings)]
+#![deny(warnings)]
 #![no_std]
 
-#[macro_use(block)]
 extern crate nb;
-
-extern crate embedded_hal;
 
 // TODO: feature flag
 extern crate fpa;
 
-mod pcd8544_spi;
-mod pcd8544_gpio;
-mod font;
 pub mod demo;
+mod font;
+mod pcd8544_gpio;
+mod pcd8544_spi;
 
-pub use pcd8544_spi::Pcd8544Spi;
 pub use pcd8544_gpio::Pcd8544Gpio;
+pub use pcd8544_spi::Pcd8544Spi;
 
 pub trait Pcd8544 {
-    fn command(&mut self, u8);
-    fn data(&mut self, &[u8]);
+    fn command(&mut self, command: u8);
+    fn data(&mut self, data: &[u8]);
 
     fn init(&mut self) {
         self.command(0x21); // chip active; horizontal addressing mode (V = 0); use extended instruction set (H = 1)
@@ -59,7 +56,7 @@ pub trait Pcd8544 {
     // note: data direction is vertical: [1 2 3 4 5 6]
     // 1 3 5
     // 2 4 6
-    fn draw_buffer(&mut self, buffer: &[u8; 6*84]) {
+    fn draw_buffer(&mut self, buffer: &[u8; 6 * 84]) {
         self.command(0x22); // vertical addressing
         self.set_position(0, 0);
         self.data(buffer);
@@ -69,7 +66,7 @@ pub trait Pcd8544 {
 
     fn clear(&mut self) {
         self.set_position(0, 0);
-        self.data(&[0u8; 6*84]);
+        self.data(&[0u8; 6 * 84]);
         self.set_position(0, 0);
     }
 }

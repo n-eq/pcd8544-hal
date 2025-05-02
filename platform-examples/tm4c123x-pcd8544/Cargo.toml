@@ -2,6 +2,7 @@
 authors = ["Hannu Hartikainen <hannu.hartikainen@gmail.com>"]
 name = "tm4c123x-pcd8544"
 version = "0.1.0"
+edition = "2021"
 
 [dependencies]
 embedded-hal = "0.1.2"
