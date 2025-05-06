@@ -7,14 +7,14 @@
 # More details at https://github.com/rust-lang/rust-clippy
 # and https://rust-lang.github.io/rust-clippy/
 
-name: rust-clippy analyze
+name: rust-clippy
 
 on:
   push:
 
 jobs:
-  rust-clippy-analyze:
-    name: Run rust-clippy analyzing
+  clippy:
+    name: Run rust-clippy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,17 +32,11 @@ jobs:
           override: true
 
       - name: Install required cargo
-        run: cargo install clippy-sarif sarif-fmt
+        run: cargo install clippy
 
       - name: Run rust-clippy
         run:
           cargo clippy
           --all-features
-          --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
+          --message-format=json
         continue-on-error: true
-
-      - name: Upload analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: rust-clippy-results.sarif
-          wait-for-processing: true
