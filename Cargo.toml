@@ -8,11 +8,6 @@ edition = "2021"
 embedded-hal = "1.0"
 embedded-hal-bus = "0.3.0"
 
-[dev-dependencies]
-panic-halt = "1.0.0"
-pcd8544-hal = { path = "../pcd8544-hal" }
-arduino-hal = { git = "https://github.com/Rahix/avr-hal", rev = "ravedude-0.2.0", features = ["arduino-uno"] }
-
 [profile.dev]
 panic = "abort"
 lto = true
