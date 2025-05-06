@@ -23,7 +23,7 @@ jobs:
           override: true
 
       - name: Install required cargo
-        run: cargo install clippy-preview
+        run: rustup component add clippy
 
       - name: Run rust-clippy
         run:
