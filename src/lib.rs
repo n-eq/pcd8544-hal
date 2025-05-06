@@ -2,11 +2,6 @@
 #![deny(warnings)]
 #![no_std]
 
-extern crate nb;
-
-// TODO: feature flag
-extern crate fpa;
-
 pub mod demo;
 mod font;
 mod pcd8544_gpio;
