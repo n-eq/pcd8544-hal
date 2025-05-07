@@ -24,7 +24,7 @@ where
         delay: &mut R,
     ) -> Pcd8544Spi<SPI, DC, CS> {
         let _ = rst.set_low();
-        delay.delay_ms(10);
+        delay.delay_ns(1);
         let _ = rst.set_high();
 
         let mut pcd = Pcd8544Spi { spi, dc, cs };

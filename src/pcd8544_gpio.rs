@@ -26,7 +26,7 @@ where
         delay: &mut R,
     ) -> Pcd8544Gpio<CLK, DIN, DC, CS> {
         let _ = rst.set_low();
-        delay.delay_ms(10);
+        delay.delay_ns(1);
         let _ = rst.set_high();
 
         let mut pcd = Pcd8544Gpio { clk, din, dc, cs };
