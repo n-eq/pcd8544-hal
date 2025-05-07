@@ -2,7 +2,6 @@
 #![deny(warnings)]
 #![no_std]
 
-pub mod demo;
 mod font;
 mod pcd8544_gpio;
 mod pcd8544_spi;

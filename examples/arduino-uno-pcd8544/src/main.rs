@@ -4,6 +4,8 @@
 use panic_halt as _;
 use pcd8544_hal::Pcd8544;
 
+static RUST_LOGO: &[u8; 504] = include_bytes!("logo.bin");
+
 #[arduino_hal::entry]
 fn main() -> ! {
     let dp = arduino_hal::Peripherals::take().unwrap();
@@ -17,7 +19,7 @@ fn main() -> ! {
         /* rst */ &mut pins.d3.into_output(),
         &mut arduino_hal::Delay::new(),
     );
-    pcd8544_hal::demo::demo(&mut pcd8544);
+    pcd8544.draw_buffer(RUST_LOGO);
 
     #[allow(clippy::empty_loop)]
     loop {}
