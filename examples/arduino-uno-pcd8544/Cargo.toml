@@ -1,0 +1,27 @@
+[package]
+name = "arduino-uno-pcd8544"
+version = "0.1.0"
+authors = ["Nabil Elqatib <nabilelqatib@gmail.com>"]
+edition = "2021"
+
+[[bin]]
+name = "arduino-uno-pcd8544"
+test = false
+bench = false
+
+[dependencies]
+panic-halt = "1.0.0"
+pcd8544= { path = "../.." }
+arduino-hal = { git = "https://github.com/Rahix/avr-hal", rev = "ravedude-0.2.0", features = ["arduino-uno"] }
+
+
+[profile.dev]
+panic = "abort"
+lto = true
+opt-level = "s"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"

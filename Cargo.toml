@@ -1,11 +1,23 @@
 [package]
-authors = ["Hannu Hartikainen <hannu.hartikainen@gmail.com>"]
-name = "pcd8544-hal"
+authors = ["Nabil ELQATIB <nabilelqatib@gmail.com>"]
+name = "pcd8544"
 version = "0.1.0"
+license = "MIT OR Apache-2.0"
+description = "A hardware abstraction layer for PCD8544 LCD controllers (mainly used in Nokia 5510 displays)"
+keywords = ["embedded", "lcd", "display", "hal", "nokia-5110", "pcd8544"]
+categories = ["embedded", "hardware-support", "no-std"]
 edition = "2021"
 
 [dependencies]
 embedded-hal = "1.0"
-embedded-hal-bus = "0.3.0"
-fpa = "0.1.0"
-nb = "0.1.1"
+
+[profile.dev]
+panic = "abort"
+lto = true
+opt-level = "s"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"

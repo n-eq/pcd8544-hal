@@ -2,12 +2,6 @@
 #![deny(warnings)]
 #![no_std]
 
-extern crate nb;
-
-// TODO: feature flag
-extern crate fpa;
-
-pub mod demo;
 mod font;
 mod pcd8544_gpio;
 mod pcd8544_spi;
@@ -15,19 +9,28 @@ mod pcd8544_spi;
 pub use pcd8544_gpio::Pcd8544Gpio;
 pub use pcd8544_spi::Pcd8544Spi;
 
+const DISPLAY_WIDTH: usize = 84;
+const DISPLAY_HEIGHT: usize = 6;
+const BUFFER_SIZE: usize = DISPLAY_WIDTH * DISPLAY_HEIGHT;
+
 pub trait Pcd8544 {
     fn command(&mut self, command: u8);
     fn data(&mut self, data: &[u8]);
 
     fn init(&mut self) {
-        self.command(0x21); // chip active; horizontal addressing mode (V = 0); use extended instruction set (H = 1)
-                            // set LCD Vop (contrast), which may require some tweaking:
-        self.command(0xB8); // try 0xB1 (for 3.3V red SparkFun), 0xB8 (for 3.3V blue SparkFun), 0xBF if your display is too dark, or 0x80 to 0xFF if experimenting
-        self.command(0x04); // set temp coefficient
-        self.command(0x14); // LCD bias mode 1:48: try 0x13 or 0x14
+        // chip active (PD=0); horizontal addressing mode (V = 0); use extended instruction set (H = 1)
+        self.command(0x21);
+        // try 0xB1 (for 3.3V red SparkFun), 0xB8 (for 3.3V blue SparkFun), 0xBF if your display is too dark, or 0x80 to 0xFF if experimenting
+        self.command(0xB1);
+        // temp coefficient (0)
+        self.command(0x04);
+        // LCD bias mode 1:48
+        self.command(0x13);
 
-        self.command(0x20); // we must send 0x20 before modifying the display control mode
-        self.command(0x0C); // set display control to normal mode: 0x0D for inverse
+        // we must send 0x20 before modifying the display control mode
+        self.command(0x20);
+        // set display control to normal mode (pixels are on when data is 1), inverse mode=0x0D
+        self.command(0x0C);
 
         self.clear();
     }
@@ -40,14 +43,19 @@ pub trait Pcd8544 {
     }
 
     fn print(&mut self, s: &str) {
-        for c in s.bytes() {
-            self.print_char(c);
+        for byte in s.bytes() {
+            match byte {
+                // printable ASCII byte or newline
+                0x20..=0x7e => self.print_char(byte),
+                // not part of printable ASCII range
+                _ => self.print_char(b'?'),
+            }
         }
     }
 
     fn set_position(&mut self, x: u8, y: u8) {
-        assert!(x <= 84);
-        assert!(y < 6);
+        assert!(usize::from(x) < DISPLAY_WIDTH);
+        assert!(usize::from(y) < DISPLAY_HEIGHT);
 
         self.command(0x40 + y);
         self.command(0x80 + x);
@@ -66,7 +74,7 @@ pub trait Pcd8544 {
 
     fn clear(&mut self) {
         self.set_position(0, 0);
-        self.data(&[0u8; 6 * 84]);
+        self.data(&[0u8; BUFFER_SIZE]);
         self.set_position(0, 0);
     }
 }

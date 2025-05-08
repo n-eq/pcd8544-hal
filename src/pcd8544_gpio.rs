@@ -22,12 +22,14 @@ where
         din: DIN,
         dc: DC,
         cs: CS,
-        rst: &mut T,
+        rst: Option<&mut T>,
         delay: &mut R,
     ) -> Pcd8544Gpio<CLK, DIN, DC, CS> {
-        let _ = rst.set_low();
-        delay.delay_ms(10);
-        let _ = rst.set_high();
+        if let Some(r) = rst {
+            let _ = r.set_low();
+            delay.delay_ns(1);
+            let _ = r.set_high();
+        }
 
         let mut pcd = Pcd8544Gpio { clk, din, dc, cs };
         pcd.init();
