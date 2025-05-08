@@ -2,6 +2,8 @@
 authors = ["Nabil ELQATIB <nabilelqatib@gmail.com>"]
 name = "pcd8544-hal"
 version = "0.1.0"
+repository = "https://github.com/n-eq/pcd8544-rs"
+readme = "README.md"
 license = "MIT OR Apache-2.0"
 description = "A hardware abstraction layer for PCD8544 LCD controllers (mainly used in Nokia 5510 displays)"
 keywords = ["embedded", "lcd", "display", "hal", "nokia-5110", "pcd8544"]
