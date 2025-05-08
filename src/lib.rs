@@ -54,8 +54,8 @@ pub trait Pcd8544 {
     }
 
     fn set_position(&mut self, x: u8, y: u8) {
-        assert!(x <= 84);
-        assert!(y < 6);
+        assert!(usize::from(x) < DISPLAY_WIDTH);
+        assert!(usize::from(y) < DISPLAY_HEIGHT);
 
         self.command(0x40 + y);
         self.command(0x80 + x);
@@ -74,7 +74,7 @@ pub trait Pcd8544 {
 
     fn clear(&mut self) {
         self.set_position(0, 0);
-        self.data(&[0u8; 6 * 84]);
+        self.data(&[0u8; BUFFER_SIZE]);
         self.set_position(0, 0);
     }
 }
