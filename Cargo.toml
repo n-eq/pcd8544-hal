@@ -1,6 +1,6 @@
 [package]
 authors = ["Nabil ELQATIB <nabilelqatib@gmail.com>"]
-name = "pcd8544"
+name = "pcd8544-hal"
 version = "0.1.0"
 license = "MIT OR Apache-2.0"
 description = "A hardware abstraction layer for PCD8544 LCD controllers (mainly used in Nokia 5510 displays)"
