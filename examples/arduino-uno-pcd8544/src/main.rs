@@ -16,7 +16,7 @@ fn main() -> ! {
         /* miso/din */ pins.d6.into_output(),
         /* mosi/dc */ pins.d5.into_output(),
         /* cs/ce */ pins.d4.into_output(),
-        /* rst */ &mut pins.d3.into_output(),
+        /* rst */ Some(&mut pins.d3.into_output()),
         &mut arduino_hal::Delay::new(),
     );
     pcd8544.draw_buffer(RUST_LOGO);
