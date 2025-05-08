@@ -9,12 +9,15 @@ _It is based on [the work](https://github.com/dancek/pcd8544-hal/) by Hannu Hart
 - [x] 100% safe
 - [x] SPI support
 - [x] GPIO support
+- [x] ASCII characters
+- [x] Bitmap drawing
 - [ ] Vertical scrolling (up/down)
 - [ ] Special characters support (line feed, carriage return)
+- [ ] Custom font configuration
 
 ## Model support
 
-Any microcontroller HAL with embedded-hal support should work with this driver
+Any microcontroller HAL with embedded-hal support should work with this driver.
 
 ## Usage
 Add this line to your `Cargo.toml`'s `[dependencies]` section:
