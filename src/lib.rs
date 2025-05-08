@@ -43,8 +43,13 @@ pub trait Pcd8544 {
     }
 
     fn print(&mut self, s: &str) {
-        for c in s.bytes() {
-            self.print_char(c);
+        for byte in s.bytes() {
+            match byte {
+                // printable ASCII byte or newline
+                0x20..=0x7e => self.print_char(byte),
+                // not part of printable ASCII range
+                _ => self.print_char(b'?'),
+            }
         }
     }
 
