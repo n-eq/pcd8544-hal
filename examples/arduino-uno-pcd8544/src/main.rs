@@ -2,7 +2,7 @@
 #![no_main]
 
 use panic_halt as _;
-use pcd8544_hal::Pcd8544;
+use pcd8544::Pcd8544;
 
 static RUST_LOGO: &[u8; 504] = include_bytes!("logo.bin");
 
@@ -11,7 +11,7 @@ fn main() -> ! {
     let dp = arduino_hal::Peripherals::take().unwrap();
     let pins = arduino_hal::pins!(dp);
 
-    let mut pcd8544 = pcd8544_hal::Pcd8544Gpio::new(
+    let mut pcd8544 = pcd8544::Pcd8544Gpio::new(
         /* sck/clk */ pins.d7.into_output(),
         /* miso/din */ pins.d6.into_output(),
         /* mosi/dc */ pins.d5.into_output(),
