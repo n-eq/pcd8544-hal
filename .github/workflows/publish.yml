@@ -1,5 +1,11 @@
 on:  
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'If true, run with --dry-run'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   main:
@@ -15,3 +21,4 @@ jobs:
       - uses: katyo/publish-crates@v2
         with:
             registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+            dry-run: ${{ inputs.dry-run }}
