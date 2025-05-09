@@ -11,8 +11,9 @@ bench = false
 
 [dependencies]
 panic-halt = "1.0.0"
-pcd8544-hal = { path = "../.." }
+pcd8544-hal = { path = "../..", features = ["progmem"] }
 arduino-hal = { git = "https://github.com/Rahix/avr-hal", rev = "ravedude-0.2.0", features = ["arduino-uno"] }
+avr-progmem = "0.4.0"
 
 
 [profile.dev]

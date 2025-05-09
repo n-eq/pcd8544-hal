@@ -4,7 +4,11 @@
 use panic_halt as _;
 use pcd8544_hal::Pcd8544;
 
-static RUST_LOGO: &[u8; 504] = include_bytes!("logo.bin");
+use avr_progmem::progmem;
+
+progmem! {
+    static progmem RUST_LOGO: [u8; 504] = *include_bytes!("logo.bin");
+}
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -19,7 +23,7 @@ fn main() -> ! {
         /* rst */ Some(&mut pins.d3.into_output()),
         &mut arduino_hal::Delay::new(),
     );
-    pcd8544.draw_buffer(RUST_LOGO);
+    pcd8544.draw_buffer_progmem(&RUST_LOGO);
 
     #[allow(clippy::empty_loop)]
     loop {}

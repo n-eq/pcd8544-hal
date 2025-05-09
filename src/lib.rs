@@ -72,6 +72,18 @@ pub trait Pcd8544 {
         self.set_position(0, 0);
     }
 
+    #[cfg(feature = "progmem")]
+    fn draw_buffer_progmem(&mut self, buffer: &avr_progmem::wrapper::ProgMem<[u8; 504]>) {
+        self.command(0x22); // vertical addressing
+        self.set_position(0, 0);
+        for i in 0..504 {
+            let byte = buffer.load_at(i);
+            self.data(&[byte]);
+        }
+        self.command(0x20); // back to horizontal addressing
+        self.set_position(0, 0);
+    }
+
     fn clear(&mut self) {
         self.set_position(0, 0);
         self.data(&[0u8; BUFFER_SIZE]);
