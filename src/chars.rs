@@ -1,7 +1,9 @@
+pub(crate) type PixelArray = [u8; 5];
+
 // Mapping of ASCII characters to their 5x8 pixel representation.
 // Every character is laid out in a 5x8 pixel grid where each
 // bit is a pixel (1: on, 0: off).
-pub static ASCII: [[u8; 5]; 95] = [
+pub(crate) static CHAR_AS_PIXEL_ARRAY: [PixelArray; 95] = [
     [0x00, 0x00, 0x00, 0x00, 0x00], // 20
     [0x00, 0x00, 0x5f, 0x00, 0x00], // 21 !
     [0x00, 0x07, 0x00, 0x07, 0x00], // 22 "
