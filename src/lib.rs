@@ -1,5 +1,5 @@
 #![deny(unsafe_code)]
-// #![deny(warnings)]
+#![deny(warnings)]
 #![no_std]
 
 mod chars;
@@ -97,18 +97,15 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         let glyph = &chars::CHAR_AS_PIXEL_ARRAY[c as usize - 0x20];
 
         // Write the 5 glyph bytes
-        for i in 0..5 {
-            let b = glyph[i];
-            self.backend.data(&[b]);
-            let offset = self.ypos as usize * DISPLAY_COL_COUNT as usize + self.xpos as usize;
-            self.buffer.data[offset] = b;
+        for b in glyph {
+            self.backend.data(&[*b]);
+            self.buffer.data[self.offset()] = *b;
             self.inc_cursor();
         }
 
         // Write the space byte
-        let offset = self.ypos as usize * DISPLAY_COL_COUNT as usize + self.xpos as usize;
         self.backend.data(&[0x00]);
-        self.buffer.data[offset] = 0x00;
+        self.buffer.data[self.offset()] = 0x00;
         self.inc_cursor();
     }
 
@@ -198,5 +195,10 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
 
     fn reset_cursor(&mut self) {
         self.set_cursor(0, 0);
+    }
+
+    #[inline(always)]
+    fn offset(&self) -> usize {
+        self.ypos as usize * DISPLAY_COL_COUNT as usize + self.xpos as usize
     }
 }

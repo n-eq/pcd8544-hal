@@ -1,4 +1,4 @@
-pub(crate) type PixelArray = [u8; 5];
+type PixelArray = [u8; 5];
 
 // Mapping of ASCII characters to their 5x8 pixel representation.
 // Every character is laid out in a 5x8 pixel grid where each
