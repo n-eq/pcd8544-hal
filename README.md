@@ -11,7 +11,7 @@ _It is based on [the work](https://github.com/dancek/pcd8544-hal/) by Hannu Hart
 - [x] GPIO support
 - [x] ASCII characters
 - [x] Bitmap drawing
-- [ ] Vertical scrolling (up/down)
+- [x] Vertical scrolling (up/down)
 - [ ] Special characters support (line feed, carriage return)
 - [ ] Custom font configuration
 

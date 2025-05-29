@@ -1,7 +1,7 @@
 use embedded_hal::delay::DelayNs;
 use embedded_hal::digital::OutputPin;
 
-use crate::Pcd8544;
+use crate::Pcd8544Backend;
 
 pub struct Pcd8544Gpio<CLK, DIN, DC, CS> {
     clk: CLK,
@@ -31,9 +31,7 @@ where
             let _ = r.set_high();
         }
 
-        let mut pcd = Pcd8544Gpio { clk, din, dc, cs };
-        pcd.init();
-        pcd
+        Pcd8544Gpio { clk, din, dc, cs }
     }
 
     fn send(&mut self, byte: u8) {
@@ -50,7 +48,7 @@ where
     }
 }
 
-impl<CLK, DIN, DC, CS> Pcd8544 for Pcd8544Gpio<CLK, DIN, DC, CS>
+impl<CLK, DIN, DC, CS> Pcd8544Backend for Pcd8544Gpio<CLK, DIN, DC, CS>
 where
     CLK: OutputPin,
     DIN: OutputPin,
