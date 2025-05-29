@@ -26,18 +26,23 @@ mod consts {
     pub(crate) const DISPLAY_CONTROL: u8 = 0x08;
     pub(crate) const DISPLAY_CONF_NORMAL: u8 = 0b100;
 
-    pub(crate) const VOID_SCREEN: [u8; super::DISPLAY_BYTES] = [0u8; super::DISPLAY_BYTES];
 }
 
 struct DisplayBuffer {
     data: [u8; DISPLAY_BYTES],
 }
 
+impl DisplayBuffer {
+    pub const fn new() -> Self {
+        Self {
+            data: [0; DISPLAY_BYTES],
+        }
+    }
+}
+
 impl Default for DisplayBuffer {
     fn default() -> Self {
-        Self {
-            data: consts::VOID_SCREEN,
-        }
+        Self::new()
     }
 }
 
@@ -111,8 +116,12 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
 
     pub fn clear(&mut self) {
         self.reset_cursor();
-        self.backend.data(&consts::VOID_SCREEN);
-        self.buffer.data.copy_from_slice(&consts::VOID_SCREEN);
+
+        for mut b in self.buffer.data {
+            b = 0;
+            self.backend.data(&[b]);
+        }
+
         self.reset_cursor();
     }
 
@@ -143,9 +152,12 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
     pub fn scroll(&mut self) {
         let (prevx, prevy) = (self.xpos, self.ypos);
 
-        // we want to reset the sceren without resetting the buffer
+        // we want to reset the screen without resetting the buffer
         self.reset_cursor();
-        self.backend.data(&consts::VOID_SCREEN);
+        for mut b in self.buffer.data {
+            b = 0;
+            self.backend.data(&[b]);
+        }
         self.reset_cursor();
 
         // Create the modified buffer
