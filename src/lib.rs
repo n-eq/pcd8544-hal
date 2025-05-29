@@ -41,11 +41,12 @@ impl Default for DisplayBuffer {
     }
 }
 
-pub struct Pcd8544Driver<B: Pcd8544Backend> {
+pub struct Pcd8544Driver<B: Pcd8544Backend, D: embedded_hal::delay::DelayNs> {
     backend: B,
     buffer: DisplayBuffer,
     xpos: u8,
     ypos: u8,
+    delay: D,
 }
 
 pub trait Pcd8544Backend {
@@ -53,10 +54,11 @@ pub trait Pcd8544Backend {
     fn data(&mut self, data: &[u8]);
 }
 
-impl<B: Pcd8544Backend> Pcd8544Driver<B> {
-    pub fn new(backend: B) -> Self {
+impl<B: Pcd8544Backend, D: embedded_hal::delay::DelayNs> Pcd8544Driver<B, D> {
+    pub fn new(backend: B, delay: D) -> Self {
         Self {
             backend,
+            delay,
             buffer: DisplayBuffer::default(),
             xpos: 0,
             ypos: 0,
@@ -169,6 +171,35 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         // restore cursor positions, only ypos is decremented (unless it was at
         // the first row = 0)
         self.set_cursor(prevx, prevy.saturating_sub(1));
+    }
+
+    pub fn power_down(&mut self) {
+        // we want to reset the sceren without resetting the buffer
+        self.reset_cursor();
+        self.backend.data(&consts::VOID_SCREEN);
+        self.reset_cursor();
+
+        self.backend.data(&[0b00100100]);
+    }
+
+    pub fn wake_up(&mut self) {
+        self.backend.data(&[0b00100000]);
+        // self.draw_buffer(self.buffer.data);
+    }
+
+    pub fn blink(&mut self, nb_times: u8) {
+        for _ in 0..nb_times {
+            self.reset_cursor();
+            for b in self.buffer.data {
+                let flip = !b;
+                self.backend.data(&[flip]);
+            }
+
+            self.delay.delay_ms(200);
+
+            self.reset_cursor();
+            self.backend.data(&self.buffer.data);
+        }
     }
 
     fn inc_cursor(&mut self) {
