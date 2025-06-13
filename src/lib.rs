@@ -149,6 +149,7 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         self.ypos = y;
     }
 
+    #[cfg(feature = "scroll")]
     pub fn scroll(&mut self) {
         let (prevx, prevy) = (self.xpos, self.ypos);
 
@@ -189,6 +190,7 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
             self.xpos = 0;
             if self.ypos + 1 >= DISPLAY_ROW_COUNT {
                 let (posx, posy) = (self.xpos, self.ypos);
+                #[cfg(feature = "scroll")]
                 self.scroll();
                 self.set_cursor(posx, posy);
             } else {
@@ -200,6 +202,7 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
 
     fn new_line(&mut self) {
         if self.ypos + 1 == DISPLAY_ROW_COUNT {
+            #[cfg(feature = "scroll")]
             self.scroll();
         }
         self.set_cursor(0, (self.ypos + 1) % DISPLAY_ROW_COUNT);
