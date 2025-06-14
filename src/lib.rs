@@ -185,6 +185,7 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         self.set_cursor(prevx, prevy.saturating_sub(1));
     }
 
+    #[inline(always)]
     fn inc_cursor(&mut self) {
         self.xpos += 1;
         if self.xpos >= DISPLAY_COL_COUNT {
@@ -209,6 +210,7 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         self.set_cursor(0, (self.ypos + 1) % DISPLAY_ROW_COUNT);
     }
 
+    #[inline(always)]
     fn reset_cursor(&mut self) {
         self.set_cursor(0, 0);
     }
