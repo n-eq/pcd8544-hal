@@ -25,7 +25,6 @@ mod consts {
     pub(crate) const BIAS: u8 = 0x10;
     pub(crate) const DISPLAY_CONTROL: u8 = 0x08;
     pub(crate) const DISPLAY_CONF_NORMAL: u8 = 0b100;
-
 }
 
 struct DisplayBuffer {
