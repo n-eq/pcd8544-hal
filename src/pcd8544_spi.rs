@@ -2,7 +2,7 @@ use embedded_hal::delay::DelayNs;
 use embedded_hal::digital::OutputPin;
 use embedded_hal::spi::SpiBus;
 
-use crate::Pcd8544;
+use crate::Pcd8544Backend;
 
 pub struct Pcd8544Spi<SPI, DC, CS> {
     spi: SPI,
@@ -29,13 +29,11 @@ where
             let _ = r.set_high();
         }
 
-        let mut pcd = Pcd8544Spi { spi, dc, cs };
-        pcd.init();
-        pcd
+        Pcd8544Spi { spi, dc, cs }
     }
 }
 
-impl<SPI, DC, CS> Pcd8544 for Pcd8544Spi<SPI, DC, CS>
+impl<SPI, DC, CS> Pcd8544Backend for Pcd8544Spi<SPI, DC, CS>
 where
     SPI: SpiBus,
     DC: OutputPin,
