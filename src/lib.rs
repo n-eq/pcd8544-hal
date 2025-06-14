@@ -2,6 +2,7 @@
 #![deny(warnings)]
 #![no_std]
 
+#[cfg(not(feature = "tiny-fp"))]
 mod chars;
 mod pcd8544_gpio;
 mod pcd8544_spi;
@@ -87,6 +88,7 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         self.clear();
     }
 
+    #[cfg(not(feature = "tiny-fp"))]
     pub fn print(&mut self, s: &str) {
         for byte in s.bytes() {
             match byte {
@@ -97,20 +99,21 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
         }
     }
 
-    pub fn print_char(&mut self, c: u8) {
-        let glyph = &chars::CHAR_AS_PIXEL_ARRAY[c as usize - 0x20];
 
-        // Write the 5 glyph bytes
-        for b in glyph {
-            self.backend.data(&[*b]);
-            self.buffer.data[self.offset()] = *b;
+    pub fn print_byte_arr(&mut self, arr: [u8; 5]) {
+        for b in arr {
+            self.backend.data(&[b]);
+            self.buffer.data[self.offset()] = b;
             self.inc_cursor();
         }
-
-        // Write the space byte
         self.backend.data(&[0x00]);
         self.buffer.data[self.offset()] = 0x00;
         self.inc_cursor();
+    }
+
+    #[cfg(not(feature = "tiny-fp"))]
+    pub fn print_char(&mut self, c: u8) {
+        self.print_byte_arr(chars::CHAR_AS_PIXEL_ARRAY[c as usize - 0x20]);
     }
 
     pub fn clear(&mut self) {
@@ -154,23 +157,22 @@ impl<B: Pcd8544Backend> Pcd8544Driver<B> {
 
         // we want to reset the screen without resetting the buffer
         self.reset_cursor();
-        for mut b in self.buffer.data {
-            b = 0;
-            self.backend.data(&[b]);
+        for _ in 0..DISPLAY_BYTES {
+            self.backend.data(&[0]);
         }
         self.reset_cursor();
 
+        const SRC_START: usize = DISPLAY_COL_COUNT as usize;
+        const LEN: usize = DISPLAY_BYTES - SRC_START;
+
+        for i in 0..LEN {
+            self.buffer.data[i] = self.buffer.data[i + SRC_START];
+        }
         // Create the modified buffer
-        self.buffer
-            .data
-            .copy_within(DISPLAY_COL_COUNT as usize..DISPLAY_BYTES, 0);
-        for byte in self
-            .buffer
-            .data
-            .iter_mut()
-            .skip(DISPLAY_COL_COUNT as usize * 5)
-        {
-            *byte = 0;
+
+        let clear_start = DISPLAY_COL_COUNT as usize * 5;
+        for i in clear_start..DISPLAY_BYTES {
+            self.buffer.data[i] = 0;
         }
 
         // Send the new buffer to the controller, since the last row was cleared,

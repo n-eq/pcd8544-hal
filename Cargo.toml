@@ -26,4 +26,7 @@ lto = true
 opt-level = "s"
 
 [features]
+default = []
 scroll = []
+# tiny footprint, don't include ASCII chars logic
+tiny-fp = []
